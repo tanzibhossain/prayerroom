@@ -35,9 +35,9 @@ $g_setting = \App\Models\GeneralSetting::where('id',1)->first();
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('admin_dashboard') }}">
             <div class="sidebar-brand-text mx-3 ttn">
-                <div class="left">
+                {{-- <div class="left">
                     <img src="{{ asset('uploads/site_photos/'.$g_setting->favicon) }}" alt="">
-                </div>
+                </div> --}}
                 <div class="right">
                     {{ env('APP_NAME') }}
                 </div>
@@ -188,33 +188,31 @@ $g_setting = \App\Models\GeneralSetting::where('id',1)->first();
         </li>
 
 
-
-
         <!-- Package Section -->
-        <li class="nav-item {{ $route == 'admin_package_view'||$route == 'admin_package_create'||$route == 'admin_package_edit' ? 'active' : '' }}">
+        {{-- <li class="nav-item {{ $route == 'admin_package_view'||$route == 'admin_package_create'||$route == 'admin_package_edit' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin_package_view') }}">
                 <i class="far fa-caret-square-right"></i>
                 <span>{{ PACKAGE_SECTION }}</span>
             </a>
-        </li>
+        </li> --}}
 
 
         <!-- Dynamic Pages -->
-        <li class="nav-item {{ $route == 'admin_dynamic_page_view'||$route == 'admin_dynamic_page_create'||$route == 'admin_dynamic_page_edit' ? 'active' : '' }}">
+        {{-- <li class="nav-item {{ $route == 'admin_dynamic_page_view'||$route == 'admin_dynamic_page_create'||$route == 'admin_dynamic_page_edit' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin_dynamic_page_view') }}">
                 <i class="far fa-caret-square-right"></i>
                 <span>{{ DYNAMIC_PAGES }}</span>
             </a>
-        </li>
+        </li> --}}
 
 
         <!-- Purchase History -->
-        <li class="nav-item {{ $route == 'admin_purchase_history_view'||$route == 'admin_purchase_history_detail'||$route == 'admin_purchase_history_invoice' ? 'active' : '' }}">
+        {{-- <li class="nav-item {{ $route == 'admin_purchase_history_view'||$route == 'admin_purchase_history_detail'||$route == 'admin_purchase_history_invoice' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin_purchase_history_view') }}">
                 <i class="far fa-caret-square-right"></i>
                 <span>{{ PURCHASE_HISTORY }}</span>
             </a>
-        </li>
+        </li> --}}
 
 
         <!-- Customer -->
@@ -235,12 +233,12 @@ $g_setting = \App\Models\GeneralSetting::where('id',1)->first();
         </li>
 
         <!-- Clear Database -->
-        <li class="nav-item {{ $route == 'admin_clear_database' ? 'active' : '' }}">
+        {{-- <li class="nav-item {{ $route == 'admin_clear_database' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin_clear_database') }}" onClick="return confirm('Be careful! All data will be removed from the website. Want to do that?');">
                 <i class="far fa-caret-square-right"></i>
                 <span>{{ CLEAR_DATABASE }}</span>
             </a>
-        </li>
+        </li> --}}
 
 
 

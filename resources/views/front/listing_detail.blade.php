@@ -256,7 +256,7 @@
 <div class="page-content">
 	<div class="container">
 		<div class="row">
-			<div class="col-lg-8 col-md-6 col-sm-12">
+			<div class="col-12 col-md-12 col-sm-12">
 				<div class="listing-page">
 					<h2><i class="fas fa-folder"></i> {{ DESCRIPTION }}</h2>
 					<p>
@@ -611,138 +611,6 @@
 						@endif
 
 
-					</div>
-
-
-				</div>
-			</div>
-			<div class="col-lg-4 col-md-6 col-sm-12">
-				<div class="listing-sidebar">
-
-					<div class="ls-widget">
-						<h2>{{ AGENT }}</h2>
-						<div class="agent">
-							<div class="photo">
-								@if($agent_detail->photo == '')
-									<img src="{{ asset('uploads/user_photos/default_photo.jpg') }}" alt="">
-								@else
-									<img src="{{ asset('uploads/user_photos/'.$agent_detail->photo) }}" alt="">
-								@endif
-
-							</div>
-							<div class="text">
-                                @if($detail->user_id == 0)
-                                    @php $type = "admin"; @endphp
-                                @else
-                                    @php $type = "user"; @endphp
-                                @endif
-                                    <h3><a href="{{ route('front_listing_agent_detail',[$type,$agent_detail->id]) }}">{{ $agent_detail->name }}</a></h3>
-								<h4>{{ POSTED_ON }} {{ \Carbon\Carbon::parse($detail->created_at)->format('d M, Y') }}</h4>
-							</div>
-						</div>
-						<div class="agent-contact">
-							<ul>
-								<li><i class="fas fa-map-marker-alt"></i> {{ $agent_detail->address }}</li>
-								<li><i class="fas fa-phone-volume"></i> {{ $agent_detail->phone }}</li>
-								<li><i class="fas fa-envelope"></i> {{ $agent_detail->email }}</li>
-								<li><a href="{{ $agent_detail->website }}" target="_blank"><i class="fas fa-globe"></i> {{ $agent_detail->website }}</a></li>
-							</ul>
-						</div>
-
-
-						@if( ($agent_detail->facebook != '') ||
-						($agent_detail->twitter != '') ||
-						($agent_detail->linkedin != '') ||
-						($agent_detail->pinterest != '') ||
-						($agent_detail->youtube != '') )
-						<div class="agent-social">
-							<ul>
-								@if($agent_detail->facebook != '')
-								<li><a href="{{ $agent_detail->facebook }}" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-								@endif
-
-								@if($agent_detail->twitter != '')
-								<li><a href="{{ $agent_detail->twitter }}" target="_blank"><i class="fab fa-twitter"></i></a></li>
-								@endif
-
-								@if($agent_detail->linkedin != '')
-								<li><a href="{{ $agent_detail->linkedin }}" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
-								@endif
-
-								@if($agent_detail->pinterest != '')
-								<li><a href="{{ $agent_detail->pinterest }}" target="_blank"><i class="fab fa-pinterest-p"></i></a></li>
-								@endif
-
-								@if($agent_detail->youtube != '')
-								<li><a href="{{ $agent_detail->youtube }}" target="_blank"><i class="fab fa-youtube"></i></a></li>
-								@endif
-							</ul>
-						</div>
-						@endif
-
-						<a href="{{ route('front_listing_agent_detail',[$type,$agent_detail->id]) }}" class="btn btn-primary btn-block agent-view-profile">{{ VIEW_PROFILE }}</a>
-					</div>
-
-                    @if($detail->listing_oh_monday != '' || $detail->listing_oh_tuesday != '' || $detail->listing_oh_wednesday != '' || $detail->listing_oh_thursday != '' || $detail->listing_oh_friday != '' || $detail->listing_oh_saturday != '' || $detail->listing_oh_sunday != '')
-					<div class="ls-widget">
-						<h2>{{ OPENING_HOUR }}</h2>
-						<div class="openning-hour">
-							<div class="table-responsive">
-								<table class="table table-bordered">
-									<tr>
-										<td>{{ MONDAY }}</td>
-										<td>{{ $detail->listing_oh_monday }}</td>
-									</tr>
-									<tr>
-										<td>{{ TUESDAY }}</td>
-										<td>{{ $detail->listing_oh_tuesday }}</td>
-									</tr>
-									<tr>
-										<td>{{ WEDNESDAY }}</td>
-										<td>{{ $detail->listing_oh_wednesday }}</td>
-									</tr>
-									<tr>
-										<td>{{ THURSDAY }}</td>
-										<td>{{ $detail->listing_oh_thursday }}</td>
-									</tr>
-									<tr>
-										<td>{{ FRIDAY }}</td>
-										<td>{{ $detail->listing_oh_friday }}</td>
-									</tr>
-									<tr>
-										<td>{{ SATURDAY }}</td>
-										<td>{{ $detail->listing_oh_saturday }}</td>
-									</tr>
-									<tr>
-										<td>{{ SUNDAY }}</td>
-										<td>{{ $detail->listing_oh_sunday }}</td>
-									</tr>
-								</table>
-							</div>
-						</div>
-					</div>
-                    @endif
-
-					<div class="ls-widget">
-						<h2>{{ CATEGORIES }}</h2>
-						<div class="category">
-							<ul>
-								@foreach($listing_categories as $row)
-								<li><a href="{{ route('front_listing_category_detail',$row->listing_category_slug) }}"><i class="fas fa-angle-right"></i> {{ $row->listing_category_name }}</a></li>
-								@endforeach
-							</ul>
-						</div>
-					</div>
-
-					<div class="ls-widget">
-						<h2>{{ LOCATIONS }}</h2>
-						<div class="category">
-							<ul>
-								@foreach($listing_locations as $row)
-								<li><a href="{{ route('front_listing_location_detail',$row->listing_location_slug) }}"><i class="fas fa-angle-right"></i> {{ $row->listing_location_name }}</a></li>
-								@endforeach
-							</ul>
-						</div>
 					</div>
 
 				</div>

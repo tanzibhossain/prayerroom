@@ -251,7 +251,7 @@ $g_setting = \App\Models\GeneralSetting::where('id',1)->first();
             .listing-sidebar .ls-widget a.agent-view-profile,
             .pricing .btn,
             .contact-form .btn,
-            .listing .owl-nav .owl-prev, 
+            .listing .owl-nav .owl-prev,
             .listing .owl-nav .owl-next,
             .reg-login-form button {
                 background: #{{ $g_setting->theme_color }};

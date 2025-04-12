@@ -42,11 +42,11 @@ $page_listing_category_item = \App\Models\PageListingCategoryItem::where('id',1)
 						</li>
                         @endif
 
-                        @if($page_pricing_item->status == 'Show')
+                        {{-- @if($page_pricing_item->status == 'Show')
 						<li class="nav-item">
 							<a href="{{ route('front_pricing') }}" class="nav-link">{{ MENU_PRICING }}</a>
 						</li>
-                        @endif
+                        @endif --}}
 
 
                         @if($page_about_item->status == 'Show' || $page_listing_location_item->status == 'Show' || $page_faq_item->status == 'Show' || $page_listing_category_item->status == 'Show' || $page_blog_item->status == 'Show' || (!$dynamic_pages->isEmpty()))
@@ -110,9 +110,9 @@ $page_listing_category_item = \App\Models\PageListingCategoryItem::where('id',1)
 							<a href="{{ route('customer_login') }}" class="nav-link"><i class="fas fa-sign-in-alt"></i> {{ MENU_LOGIN_REGISTER }}</a>
 							@endif
 						</li>
-						<li class="nav-item nav-item-last">
+						{{-- <li class="nav-item nav-item-last">
 							<a href="{{ route('customer_listing_add') }}" class="nav-link"><i class="fas fa-plus"></i> {{ MENU_ADD_LISTING }}</a>
-						</li>
+						</li> --}}
                         @endif
 
 					</ul>
