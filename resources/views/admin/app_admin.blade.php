@@ -66,7 +66,7 @@ $g_setting = \App\Models\GeneralSetting::where('id',1)->first();
             <div id="collapseSetting" class="collapse {{ $route == 'admin_setting_general'||$route == 'admin_payment'||$route == 'admin_social_media_view'||$route =='admin_social_media_create'||$route =='admin_social_media_store'||$route =='admin_social_media_edit' ? 'show' : '' }}" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <a class="collapse-item" href="{{ route('admin_setting_general') }}">{{ GENERAL_SETTING }}</a>
-                    <a class="collapse-item" href="{{ route('admin_payment') }}">{{ PAYMENT_SETTING }}</a>
+                    {{-- <a class="collapse-item" href="{{ route('admin_payment') }}">{{ PAYMENT_SETTING }}</a> --}}
                     <a class="collapse-item" href="{{ route('admin_social_media_view') }}">{{ SOCIAL_MEDIA }}</a>
                 </div>
             </div>
