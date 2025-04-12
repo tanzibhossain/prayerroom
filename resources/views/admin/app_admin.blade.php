@@ -73,7 +73,7 @@ $g_setting = \App\Models\GeneralSetting::where('id',1)->first();
         </li>
 
         <!-- Language Settings -->
-        <li class="nav-item {{ $route =='admin_language_menu_text'||$route =='admin_language_website_text'||$route =='admin_language_notification_text'||$route =='admin_language_admin_panel_text' ? 'active' : '' }}">
+        {{-- <li class="nav-item {{ $route =='admin_language_menu_text'||$route =='admin_language_website_text'||$route =='admin_language_notification_text'||$route =='admin_language_admin_panel_text' ? 'active' : '' }}">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLanguage" aria-expanded="true" aria-controls="collapseLanguage">
                 <i class="fas fa-folder"></i>
                 <span>{{ LANGUAGE_SETTINGS }}</span>
@@ -86,7 +86,7 @@ $g_setting = \App\Models\GeneralSetting::where('id',1)->first();
                     <a class="collapse-item " href="{{ route('admin_language_admin_panel_text') }}">{{ ADMIN_PANEL_TEXT }}</a>
                 </div>
             </div>
-        </li>
+        </li> --}}
 
 
 
@@ -225,12 +225,12 @@ $g_setting = \App\Models\GeneralSetting::where('id',1)->first();
 
 
         <!-- Email Template -->
-        <li class="nav-item {{ $route == 'admin_email_template_view' ? 'active' : '' }}">
+        {{-- <li class="nav-item {{ $route == 'admin_email_template_view' ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin_email_template_view') }}">
                 <i class="far fa-caret-square-right"></i>
                 <span>{{ EMAIL_TEMPLATE }}</span>
             </a>
-        </li>
+        </li> --}}
 
         <!-- Clear Database -->
         {{-- <li class="nav-item {{ $route == 'admin_clear_database' ? 'active' : '' }}">
