@@ -59,8 +59,8 @@ Route::get('blog', [BlogControllerForFront::class,'index'])->name('front_blogs')
 Route::get('post/{slug}', [BlogControllerForFront::class,'detail'])->name('front_post');
 Route::post('post/comment', [BlogControllerForFront::class,'comment'])->name('front_comment');
 Route::get('category/{slug}', [CategoryControllerForFront::class,'detail'])->name('front_category');
-Route::post('search', [SearchController::class,'index']);
-Route::get('search', function() {abort(404);});
+// Route::post('search', [SearchController::class,'index']);
+// Route::get('search', function() {abort(404);});
 Route::get('faq', [FaqControllerForFront::class,'index'])->name('front_faq');
 Route::get('page/{slug}', [PageController::class,'detail'])->name('front_dynamic_page');
 Route::get('contact', [ContactController::class,'index'])->name('front_contact');
@@ -113,9 +113,9 @@ Route::middleware('auth')->prefix('customer')->group(function () {
     Route::get('payment/paypal-success', [CustomerControllerForFront::class, 'paypal_success'])->name('paypal_success');
     Route::get('payment/paypal-cancel', [CustomerControllerForFront::class, 'paypal_cancel'])->name('paypal_cancel');
 
-    
+
     Route::post('payment/bank', [CustomerControllerForFront::class,'bank'])->name('customer_payment_bank');
-    
+
     Route::get('package/purchase/history', [CustomerControllerForFront::class,'purchase_history'])->name('customer_package_purchase_history');
     Route::get('package/purchase/{id}', [CustomerControllerForFront::class,'purchase_history_detail'])->name('customer_package_purchase_history_detail');
     Route::get('package/invoice/{id}', [CustomerControllerForFront::class,'invoice'])->name('customer_package_purchase_invoice');
@@ -128,7 +128,7 @@ Route::middleware('auth')->prefix('customer')->group(function () {
     Route::get('banner-change', [CustomerControllerForFront::class,'update_banner'])->name('customer_update_banner');
     Route::post('banner-change/update', [CustomerControllerForFront::class,'update_banner_confirm'])->name('customer_update_banner_confirm');
     Route::get('listing/view', [CustomerControllerForFront::class,'listing_view'])->name('customer_listing_view');
-    Route::get('listing-search-result', [CustomerControllerForFront::class,'search_result'])->name('customer_listing_search');    
+    Route::get('listing-search-result', [CustomerControllerForFront::class,'search_result'])->name('customer_listing_search');
     Route::get('listing/detail/{id}', [CustomerControllerForFront::class,'listing_view_detail'])->name('customer_listing_view_detail');
     Route::get('listing/add', [CustomerControllerForFront::class,'listing_add'])->name('customer_listing_add');
     Route::post('listing/add/store', [CustomerControllerForFront::class,'listing_add_store'])->name('customer_listing_add_store');
@@ -330,7 +330,7 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('customer/delete/{id}', [CustomerControllerForAdmin::class,'destroy'])->name('admin_customer_delete');
     Route::get('customer-status/{id}', [CustomerControllerForAdmin::class,'change_status']);
     Route::get('clear-database', [ClearDatabaseController::class,'index'])->name('admin_clear_database');
-        
+
 });
 
 Route::prefix('admin')->group(function () {
