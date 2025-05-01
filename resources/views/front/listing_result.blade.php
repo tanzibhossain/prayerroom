@@ -36,22 +36,30 @@
                             </select>
                         </div>
 
+                        <!-- Location Checkboxes -->
                         <div class="lf-widget">
-                            <select name="location" class="form-control select2">
-                                <option value="">{{ LOCATIONS }}</option>
-                                @foreach($listing_locations as $row)
-                                    <option value="{{ $row->id }}" @if($row->id == $location_id) selected @endif>{{ $row->listing_location_name }}</option>
-                                @endforeach
-                            </select>
+                            <label><strong>{{ LOCATIONS }}</strong></label>
+                            @foreach($listing_locations as $row)
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="location[]" value="{{ $row->id }}" {{ is_array(request()->location) && in_array($row->id, request()->location) ? 'checked' : '' }}>
+                                        {{ $row->listing_location_name }}
+                                    </label>
+                                </div>
+                            @endforeach
                         </div>
 
+                        <!-- Amenity Checkboxes -->
                         <div class="lf-widget">
-                            <select name="amenity" class="form-control select2">
-                                <option value="">{{ AMENITIES }}</option>
-                                @foreach($amenities as $row)
-                                    <option value="{{ $row->id }}" @if($row->id == $amenity_id) selected @endif>{{ $row->amenity_name }}</option>
-                                @endforeach
-                            </select>
+                            <label><strong>{{ AMENITIES }}</strong></label>
+                            @foreach($amenities as $row)
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="amenity[]" value="{{ $row->id }}" {{ is_array(request()->amenity) && in_array($row->id, request()->amenity) ? 'checked' : '' }}>
+                                        {{ $row->amenity_name }}
+                                    </label>
+                                </div>
+                            @endforeach
                         </div>
 
                         <div class="form-group">

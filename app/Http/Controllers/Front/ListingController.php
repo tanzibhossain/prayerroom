@@ -59,7 +59,7 @@ class ListingController extends Controller
             ->orWhere('listings.admin_id', '>', 0);
         })
         ->exists();
-        
+
         if (!$listingValid) {
             return redirect()->route('front_home');
         }
@@ -206,7 +206,7 @@ class ListingController extends Controller
     public function location_all() {
         $g_setting = GeneralSetting::where('id', 1)->first();
         $listing_location_page_data = PageListingLocationItem::where('id', 1)->first();
-        
+
         $currentDate = date('Y-m-d');
 
         $orderwise_listing_locations = ListingLocation::select(
@@ -233,7 +233,7 @@ class ListingController extends Controller
         ->groupBy('listing_locations.id', 'listing_locations.listing_location_name', 'listing_locations.listing_location_slug', 'listing_locations.listing_location_photo')
         ->orderBy('listings_count', 'desc')
         ->get();
-        
+
 
         return view('front.listing_locations', compact('g_setting', 'listing_location_page_data', 'orderwise_listing_locations'));
     }
@@ -267,7 +267,7 @@ class ListingController extends Controller
     public function agent_detail($type,$id) {
 
         $g_setting = GeneralSetting::where('id', 1)->first();
-    
+
         if ($type == 'admin') {
             $agent_detail = Admin::where('id', $id)->first();
             $all_listings = Listing::with('rListingCategory', 'rListingLocation')
@@ -296,7 +296,7 @@ class ListingController extends Controller
     	return view('front.listing_agent_detail', compact('g_setting','agent_detail','all_listings'));
     }
 
-    public function listing_result(Request $request) 
+    public function listing_result(Request $request)
     {
         $g_setting = GeneralSetting::where('id', 1)->first();
         $listing_page_data = PageListingItem::where('id', 1)->first();
@@ -306,62 +306,70 @@ class ListingController extends Controller
 
         $all_text = $request->text;
         $category_id = $request->category;
-        $location_id = $request->location;
-        $amenity_id = $request->amenity;
-        
+        $location_ids = $request->location ?? []; // updated to handle multiple
+        $amenity_ids = $request->amenity ?? [];   // updated to handle multiple
+
         $currentDate = date('Y-m-d');
         $listing_items = DB::table('listings');
 
-        if($request->text != '') {
+        if ($request->text != '') {
             $listing_items = $listing_items->where('listings.listing_name','LIKE', '%'.$request->text.'%');
         }
 
-        if($request->category != '') {
-            $listing_items = $listing_items->where('listings.listing_category_id',$request->category);
+        if ($request->category != '') {
+            $listing_items = $listing_items->where('listings.listing_category_id', $request->category);
         }
 
-        if($request->location != '') {
-            $listing_items = $listing_items->where('listings.listing_location_id',$request->location);
-        }
-        
-        // Join with listing_amenities and filter by amenity if it is provided
-        if($request->amenity != '') {
-            $listing_items = $listing_items->join('listing_amenities', 'listings.id', '=', 'listing_amenities.listing_id')
-                                        ->where('listing_amenities.amenity_id', $request->amenity);
+        if (!empty($location_ids)) {
+            $listing_items = $listing_items->whereIn('listings.listing_location_id', $location_ids);
         }
 
-        $listing_items = $listing_items->join('listing_categories', 'listings.listing_category_id','=', 'listing_categories.id');
-        $listing_items = $listing_items->join('listing_locations', 'listings.listing_location_id','=', 'listing_locations.id');
-        
-        // Add join for package_purchases table to filter based on package expiration and currently_active status
-        $listing_items = $listing_items->leftJoin('package_purchases', function($join) use ($currentDate) {
-            $join->on('listings.user_id', '=', 'package_purchases.user_id')
-                ->where('package_purchases.package_end_date', '>=', $currentDate)
-                ->where('package_purchases.currently_active', '=', 1);
-        });
+        if (!empty($amenity_ids)) {
+            $listing_items = $listing_items
+                ->join('listing_amenities', 'listings.id', '=', 'listing_amenities.listing_id')
+                ->whereIn('listing_amenities.amenity_id', $amenity_ids);
+        }
 
-        // Add where clause to filter listings based on user package validity or admin listing
-        $listing_items = $listing_items->where(function($query) use ($currentDate) {
-            $query->where(function($subQuery) use ($currentDate) {
-                $subQuery->where('listings.user_id', '>', 0)
+        $listing_items = $listing_items
+            ->join('listing_categories', 'listings.listing_category_id', '=', 'listing_categories.id')
+            ->join('listing_locations', 'listings.listing_location_id', '=', 'listing_locations.id')
+            ->leftJoin('package_purchases', function($join) use ($currentDate) {
+                $join->on('listings.user_id', '=', 'package_purchases.user_id')
+                    ->where('package_purchases.package_end_date', '>=', $currentDate)
+                    ->where('package_purchases.currently_active', '=', 1);
+            })
+            ->where(function($query) use ($currentDate) {
+                $query->where(function($subQuery) use ($currentDate) {
+                    $subQuery->where('listings.user_id', '>', 0)
                         ->where('package_purchases.package_end_date', '>=', $currentDate)
                         ->where('package_purchases.currently_active', '=', 1);
+                })
+                ->orWhere('listings.admin_id', '>', 0);
             })
-            ->orWhere('listings.admin_id', '>', 0);
-        });
+            ->where('listings.listing_status', 'Active')
+            ->select(
+                'listings.*',
+                'listing_categories.listing_category_name',
+                'listing_categories.listing_category_slug',
+                'listing_locations.listing_location_name',
+                'listing_locations.listing_location_slug'
+            )
+            ->paginate(4);
 
-        $listing_items = $listing_items->where('listings.listing_status','Active');
-        $listing_items = $listing_items->select('listings.*',
-            'listing_categories.listing_category_name',
-            'listing_categories.listing_category_slug',
-            'listing_locations.listing_location_name',
-            'listing_locations.listing_location_slug'
-        );
-
-        $listing_items = $listing_items->paginate(4);
-
-        return view('front.listing_result', compact('g_setting','listing_page_data','listing_items','listing_categories', 'listing_locations', 'amenities','all_text','category_id','location_id','amenity_id'));
+        return view('front.listing_result', compact(
+            'g_setting',
+            'listing_page_data',
+            'listing_items',
+            'listing_categories',
+            'listing_locations',
+            'amenities',
+            'all_text',
+            'category_id',
+            'location_ids',
+            'amenity_ids'
+        ));
     }
+
 
     public function send_message(Request $request) {
 
@@ -464,7 +472,7 @@ class ListingController extends Controller
         if(env('PROJECT_MODE') == 0) {
             return redirect()->back()->with('error', env('PROJECT_NOTIFICATION'));
         }
-        
+
 	    if(Auth::user() == null) {
             return redirect()->back()->with('error', ERR_LOGIN_FIRST);
         }
