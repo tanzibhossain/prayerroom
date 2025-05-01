@@ -13,5 +13,5 @@
 <script src="{{ asset('frontend/js/summernote-bs4.min.js') }}"></script>
 <script src="{{ asset('frontend/js/fontawesome-iconpicker.js') }}"></script>
 <script src="{{ asset('frontend/js/sweetalert2.min.js') }}"></script>
-<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+{{-- <script src="https://www.paypalobjects.com/api/checkout.js"></script> --}}
 <script src='https://www.google.com/recaptcha/api.js'></script>
