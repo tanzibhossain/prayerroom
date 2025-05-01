@@ -14,20 +14,21 @@
 				<div class="box">
 					<form action="{{ url('listing-result') }}" method="get">
 						<div class="input-group input-box mb-3">
-							<input type="text" class="form-control" placeholder="{{ FIND_ANYTHING }}" name="text">
+							<input type="text" class="form-control" placeholder="{{ FIND_ANYTHING }}" name="text" style="min-height: 40px;">
 							<input type="hidden" name="anemity" value="">
-							<select name="location" class="form-control select2">
-								<option value="">{{ SELECT_LOCATION }}</option>
-								@foreach($listing_locations as $row)
-									<option value="{{ $row->id }}">{{ $row->listing_location_name }}</option>
-								@endforeach
-							</select>
-							<select name="category" class="form-control select2">
-								<option value="">{{ SELECT_CATEGORY }}</option>
-								@foreach($listing_categories as $row)
-									<option value="{{ $row->id }}">{{ $row->listing_category_name }}</option>
-								@endforeach
-							</select>
+
+                            <select name="location" class="form-control select2-location" multiple="multiple">
+                                @foreach($listing_locations as $row)
+                                    <option value="{{ $row->id }}">{{ $row->listing_location_name }}</option>
+                                @endforeach
+                            </select>
+
+                            <select name="category" class="form-control select2-category" multiple="multiple">
+                                @foreach($listing_categories as $row)
+                                    <option value="{{ $row->id }}">{{ $row->listing_category_name }}</option>
+                                @endforeach
+                            </select>
+
 							<div class="input-group-append">
 								<button type="submit"><i class="fa fa-search"></i> {{ SEARCH }}</button>
 							</div>
@@ -39,6 +40,27 @@
 	</div>
 </div>
 
+<script>
+document.querySelector('form').addEventListener('submit', function (e) {
+    const form = this;
+
+    ['location', 'category'].forEach(function(field) {
+        const selects = form.querySelectorAll('select[name="' + field + '"] option:checked');
+        const values = Array.from(selects).map(opt => opt.value).join(',');
+
+        // Remove original selects to prevent duplication
+        form.querySelectorAll('select[name="' + field + '"]').forEach(el => el.disabled = true);
+
+        if (values) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = field;
+            input.value = values;
+            form.appendChild(input);
+        }
+    });
+});
+</script>
 
 @if($page_home_items->category_status == 'Show')
 <div class="popular-category">
@@ -231,7 +253,7 @@
                 </div>
             </div>
             @endforeach
-			
+
 		</div>
 	</div>
 </div>
@@ -263,7 +285,7 @@
 					<div class="popular-city-item effect-item">
 						<div class="photo image-effect">
 							<img src="{{ asset('uploads/listing_location_photos/'.$row->listing_location_photo) }}" alt="">
-						</div>				
+						</div>
 						<div class="text">
 							<h4>{{ $row->listing_location_name }}</h4>
 							<p>{{ $row->listings_count }} {{ LISTINGS }}</p>

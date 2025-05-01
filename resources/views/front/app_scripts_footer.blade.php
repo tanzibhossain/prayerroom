@@ -86,3 +86,21 @@ s0.parentNode.insertBefore(s1,s0);
 </script>
 <!--End of Tawk.to Script-->
 @endif
+
+<script>
+$(document).ready(function() {
+    $('.select2-location').select2({
+        placeholder: "{{ SELECT_LOCATION }}",
+        allowClear: true,
+        width: 'resolve',
+        closeOnSelect: false
+    });
+
+    $('.select2-category').select2({
+        placeholder: "{{ SELECT_CATEGORY }}",
+        allowClear: true,
+        width: 'resolve',
+        closeOnSelect: false
+    });
+});
+</script>

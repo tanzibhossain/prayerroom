@@ -165,14 +165,17 @@ a:hover {
 }
 .search-section .input-box input {
 	width: 25%;
-	height: 40px;
+	/* height: 40px; */
 	font-size: 16px!important;
-	border-top-left-radius: 6px;
-	border-bottom-left-radius: 6px;
+	border-radius: 4px !important;
+}
+.search-section .select2-selection--multiple {
+    padding: 0 .375rem;
+    min-height: 40px;
 }
 .search-section .input-box .select2-container {
 	width: 25%!important;
-	height: 40px;
+	min-height: 40px;
 	font-size: 16px!important;
 }
 .search-section .input-group-append {
@@ -185,8 +188,8 @@ a:hover {
 	background: #e00445;
 	border: 0;
 	color: #fff;
-	border-top-right-radius: 6px;
-	border-bottom-right-radius: 6px;
+	border-radius: 4px !important;
+    margin-left: 2px;
 }
 .select2-container--bootstrap .select2-selection {
 	font-size: 16px!important;
