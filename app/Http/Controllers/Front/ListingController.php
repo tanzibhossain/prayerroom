@@ -306,8 +306,8 @@ class ListingController extends Controller
 
         $all_text = $request->text;
         $category_id = $request->category;
-        $location_ids = $request->location ? explode(',', $request->location) : [];
-        $amenity_ids = $request->amenity ? explode(',', $request->amenity) : [];
+        $location_ids = $request->location ?? []; // updated to handle multiple
+        $amenity_ids = $request->amenity ?? [];   // updated to handle multiple
 
         $currentDate = date('Y-m-d');
         $listing_items = DB::table('listings');

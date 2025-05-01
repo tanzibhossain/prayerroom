@@ -42,7 +42,7 @@
                             @foreach($listing_locations as $row)
                                 <div>
                                     <label>
-                                        <input type="checkbox" name="location" value="{{ $row->id }}">
+                                        <input type="checkbox" name="location" value="{{ $row->id }}" {{ is_array(request()->location) && in_array($row->id, request()->location) ? 'checked' : '' }}>
                                         {{ $row->listing_location_name }}
                                     </label>
                                 </div>
@@ -55,7 +55,7 @@
                             @foreach($amenities as $row)
                                 <div>
                                     <label>
-                                        <input type="checkbox" name="amenity" value="{{ $row->id }}">
+                                        <input type="checkbox" name="amenity" value="{{ $row->id }}" {{ is_array(request()->amenity) && in_array($row->id, request()->amenity) ? 'checked' : '' }}>
                                         {{ $row->amenity_name }}
                                     </label>
                                 </div>
@@ -233,25 +233,5 @@
         </div>
     </div>
 </div>
-
-<script>
-document.querySelector('form').addEventListener('submit', function (e) {
-    const form = this;
-    ['amenity', 'location'].forEach(function (field) {
-        const checkboxes = form.querySelectorAll('input[name="' + field + '"]:checked');
-        if (checkboxes.length > 0) {
-            const values = Array.from(checkboxes).map(cb => cb.value).join(',');
-            // remove existing inputs
-            checkboxes.forEach(cb => cb.disabled = true);
-            // add hidden input with comma-separated value
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = field;
-            input.value = values;
-            form.appendChild(input);
-        }
-    });
-});
-</script>
 
 @endsection
