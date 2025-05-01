@@ -305,9 +305,9 @@ class ListingController extends Controller
         $amenities = Amenity::get();
 
         $all_text = $request->text;
-        $category_id = $request->category;
-        $location_ids = $request->location ?? []; // updated to handle multiple
-        $amenity_ids = $request->amenity ?? [];   // updated to handle multiple
+        $category_ids = $request->category ? explode(',', $request->category) : [];
+        $location_ids = $request->location ? explode(',', $request->location) : [];
+        $amenity_ids = $request->amenity ? explode(',', $request->amenity) : [];
 
         $currentDate = date('Y-m-d');
         $listing_items = DB::table('listings');
@@ -316,8 +316,8 @@ class ListingController extends Controller
             $listing_items = $listing_items->where('listings.listing_name','LIKE', '%'.$request->text.'%');
         }
 
-        if ($request->category != '') {
-            $listing_items = $listing_items->where('listings.listing_category_id', $request->category);
+        if (!empty($category_ids)) {
+            $listing_items = $listing_items->whereIn('listings.listing_category_id', $category_ids);
         }
 
         if (!empty($location_ids)) {
@@ -325,6 +325,7 @@ class ListingController extends Controller
         }
 
         if (!empty($amenity_ids)) {
+            // dd($amenity_ids);
             $listing_items = $listing_items
                 ->join('listing_amenities', 'listings.id', '=', 'listing_amenities.listing_id')
                 ->whereIn('listing_amenities.amenity_id', $amenity_ids);
@@ -354,6 +355,7 @@ class ListingController extends Controller
                 'listing_locations.listing_location_name',
                 'listing_locations.listing_location_slug'
             )
+            ->groupBy('listings.id')
             ->paginate(4);
 
         return view('front.listing_result', compact(
@@ -364,7 +366,7 @@ class ListingController extends Controller
             'listing_locations',
             'amenities',
             'all_text',
-            'category_id',
+            'category_ids',
             'location_ids',
             'amenity_ids'
         ));

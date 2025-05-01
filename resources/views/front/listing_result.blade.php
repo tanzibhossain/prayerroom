@@ -2,6 +2,12 @@
 
 @section('content')
 
+@php
+    $selected_category_ids = request()->category ? explode(',', request()->category) : [];
+    $selected_location_ids = request()->location ? explode(',', request()->location) : [];
+    $selected_amenity_ids = request()->amenity ? explode(',', request()->amenity) : [];
+@endphp
+
 <div class="page-banner">
     <h1>{{ $listing_page_data->name }}</h1>
     <nav>
@@ -28,12 +34,15 @@
                         </div>
 
                         <div class="lf-widget">
-                            <select name="category" class="form-control select2">
-                                <option value="">{{ CATEGORIES }}</option>
-                                @foreach($listing_categories as $row)
-                                    <option value="{{ $row->id }}" @if($row->id == $category_id) selected @endif>{{ $row->listing_category_name }}</option>
-                                @endforeach
-                            </select>
+                            <label><strong>{{ CATEGORIES }}</strong></label>
+                            @foreach($listing_categories as $row)
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="category" value="{{ $row->id }}" {{ in_array($row->id, $selected_category_ids) ? 'checked' : '' }}>
+                                        {{ $row->listing_category_name }}
+                                    </label>
+                                </div>
+                            @endforeach
                         </div>
 
                         <!-- Location Checkboxes -->
@@ -42,7 +51,7 @@
                             @foreach($listing_locations as $row)
                                 <div>
                                     <label>
-                                        <input type="checkbox" name="location[]" value="{{ $row->id }}" {{ is_array(request()->location) && in_array($row->id, request()->location) ? 'checked' : '' }}>
+                                        <input type="checkbox" name="location" value="{{ $row->id }}" {{ in_array($row->id, $selected_location_ids) ? 'checked' : '' }}>
                                         {{ $row->listing_location_name }}
                                     </label>
                                 </div>
@@ -55,7 +64,7 @@
                             @foreach($amenities as $row)
                                 <div>
                                     <label>
-                                        <input type="checkbox" name="amenity[]" value="{{ $row->id }}" {{ is_array(request()->amenity) && in_array($row->id, request()->amenity) ? 'checked' : '' }}>
+                                        <input type="checkbox" name="amenity" value="{{ $row->id }}" {{ in_array($row->id, $selected_amenity_ids) ? 'checked' : '' }}>
                                         {{ $row->amenity_name }}
                                     </label>
                                 </div>
@@ -70,7 +79,22 @@
             </div>
 
             <div class="col-lg-8 col-md-6 col-sm-12">
-
+                @if(count($selected_category_ids) || count($selected_location_ids) || count($selected_amenity_ids))
+                    <div class="mb-3">
+                        <h5><strong>Selected {{ FILTERS ?? 'Selected Filters' }}:</strong></h5>
+                        <ul class="list-inline">
+                            @foreach($listing_categories->whereIn('id', $selected_category_ids) as $cat)
+                                <li class="list-inline-item badge bg-primary text-white">{{ $cat->listing_category_name }}</li>
+                            @endforeach
+                            @foreach($listing_locations->whereIn('id', $selected_location_ids) as $loc)
+                                <li class="list-inline-item badge bg-success text-white">{{ $loc->listing_location_name }}</li>
+                            @endforeach
+                            @foreach($amenities->whereIn('id', $selected_amenity_ids) as $am)
+                                <li class="list-inline-item badge bg-info text-white">{{ $am->amenity_name }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <div class="right-area">
                     <div class="row">
 
@@ -234,4 +258,25 @@
     </div>
 </div>
 
+<script>
+document.querySelector('form').addEventListener('submit', function (e) {
+    const form = this;
+
+    ['category', 'location', 'amenity'].forEach(function(field) {
+        const checkboxes = form.querySelectorAll('input[name="' + field + '"]:checked');
+        const values = Array.from(checkboxes).map(cb => cb.value).join(',');
+
+        // Remove checkboxes to avoid duplicated values
+        checkboxes.forEach(cb => cb.disabled = true);
+
+        if (values) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = field;
+            input.value = values;
+            form.appendChild(input);
+        }
+    });
+});
+</script>
 @endsection
