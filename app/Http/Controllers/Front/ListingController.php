@@ -313,7 +313,28 @@ class ListingController extends Controller
         $listing_items = DB::table('listings');
 
         if ($request->text != '') {
-            $listing_items = $listing_items->where('listings.listing_name','LIKE', '%'.$request->text.'%');
+            // Find category IDs matching the text
+            $matchedCategoryIds = ListingCategory::where('listing_category_name', 'LIKE', '%' . $request->text . '%')
+                ->pluck('id')
+                ->toArray();
+
+            // Find location IDs matching the text
+            $matchedLocationIds = ListingLocation::where('listing_location_name', 'LIKE', '%' . $request->text . '%')
+                ->pluck('id')
+                ->toArray();
+
+            // Filter by name or matched category/location IDs
+            $listing_items = $listing_items->where(function ($query) use ($request, $matchedCategoryIds, $matchedLocationIds) {
+                $query->where('listings.listing_name', 'LIKE', '%' . $request->text . '%');
+
+                if (!empty($matchedCategoryIds)) {
+                    $query->orWhereIn('listings.listing_category_id', $matchedCategoryIds);
+                }
+
+                if (!empty($matchedLocationIds)) {
+                    $query->orWhereIn('listings.listing_location_id', $matchedLocationIds);
+                }
+            });
         }
 
         if (!empty($category_ids)) {
