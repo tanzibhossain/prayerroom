@@ -103,7 +103,7 @@ $g_setting = \App\Models\GeneralSetting::where('id',1)->first();
                     <a class="collapse-item" href="{{ route('admin_page_blog_edit') }}">{{ BLOG }}</a>
                     <a class="collapse-item" href="{{ route('admin_page_faq_edit') }}">{{ FAQ }}</a>
                     <a class="collapse-item" href="{{ route('admin_page_contact_edit') }}">{{ CONTACT }}</a>
-                    <a class="collapse-item" href="{{ route('admin_page_pricing_edit') }}">{{ PRICING }}</a>
+                    {{-- <a class="collapse-item" href="{{ route('admin_page_pricing_edit') }}">{{ PRICING }}</a> --}}
                     <a class="collapse-item" href="{{ route('admin_page_listing_category_edit') }}">{{ LISTING_CATEGORY }}</a>
                     <a class="collapse-item" href="{{ route('admin_page_listing_location_edit') }}">{{ LISTING_LOCATION }}</a>
                     <a class="collapse-item" href="{{ route('admin_page_listing_edit') }}">{{ LISTING }}</a>
