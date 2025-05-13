@@ -1,6 +1,6 @@
 <script src="{{ asset('frontend/js/custom.js') }}"></script>
 @php
-    $g_settings = \App\Models\GeneralSetting::where('id',1)->first();
+    $g_settings = \App\Models\GeneralSetting::where('id', 1)->first();
 @endphp
 @if($g_settings->layout_direction == 'ltr')
     <script src="{{ asset('frontend/js/ltr.js') }}"></script>
@@ -11,6 +11,27 @@
 
 @if ($errors->any())
     @foreach($errors->all() as $error)
+        <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 1800,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: 'error',
+                title: '{{ $error }}'
+            });
+        </script>
+    @endforeach
+@endif
+
+@if(session()->get('error'))
     <script>
         const Toast = Swal.mixin({
             toast: true,
@@ -25,82 +46,101 @@
         });
         Toast.fire({
             icon: 'error',
-            title: '{{ $error }}'
+            title: '{{ session()->get("error") }}'
         });
     </script>
-    @endforeach
-@endif
-
-@if(session()->get('error'))
-<script>
-    const Toast = Swal.mixin({
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 1800,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.onmouseenter = Swal.stopTimer;
-            toast.onmouseleave = Swal.resumeTimer;
-        }
-    });
-    Toast.fire({
-        icon: 'error',
-        title: '{{ session()->get("error") }}'
-    });
-</script>
 @endif
 
 @if(session()->get('success'))
-<script>
-    const Toast = Swal.mixin({
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 1800,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.onmouseenter = Swal.stopTimer;
-            toast.onmouseleave = Swal.resumeTimer;
-        }
-    });
-    Toast.fire({
-        icon: "success",
-        title: "{{ session()->get('success') }}"
-    });
-</script>
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 1800,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: "{{ session()->get('success') }}"
+        });
+    </script>
 @endif
 
 @if($g_setting->tawk_live_chat_status == 'Show')
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/{{ $g_setting->tawk_live_chat_property_id }}/1fapclhaj';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+        (function () {
+            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+            s1.async = true;
+            s1.src = 'https://embed.tawk.to/{{ $g_setting->tawk_live_chat_property_id }}/1fapclhaj';
+            s1.charset = 'UTF-8';
+            s1.setAttribute('crossorigin', '*');
+            s0.parentNode.insertBefore(s1, s0);
+        })();
+    </script>
+    <!--End of Tawk.to Script-->
 @endif
 
+<!--Start of Select2 Script-->
 <script>
-$(document).ready(function() {
-    $('.select2-location').select2({
-        placeholder: "{{ SELECT_LOCATION }}",
-        allowClear: true,
-        width: 'resolve',
-        closeOnSelect: false
-    });
+    $(document).ready(function () {
+        $('.select2-location').select2({
+            placeholder: "{{ SELECT_LOCATION }}",
+            allowClear: true,
+            width: 'resolve',
+            closeOnSelect: false
+        });
 
-    $('.select2-category').select2({
-        placeholder: "{{ SELECT_CATEGORY }}",
-        allowClear: true,
-        width: 'resolve',
-        closeOnSelect: false
+        $('.select2-category').select2({
+            placeholder: "{{ SELECT_CATEGORY }}",
+            allowClear: true,
+            width: 'resolve',
+            closeOnSelect: false
+        });
     });
-});
 </script>
+<!--End of Select2 Script-->
+
+<!--Start of Google Translate Script-->
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+        }, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
+</script>
+
+<style>
+    #google_translate_element a {
+        font-size: 14px;
+    }
+
+    #google_translate_element select {
+        background: transparent;
+        border: none;
+        font-size: 14px;
+        color: inherit;
+        cursor: pointer;
+        padding: 4px 8px;
+        font-family: inherit;
+
+    }
+
+    #google_translate_element .goog-te-gadget-icon {
+        display: none !important;
+    }
+
+    #google_translate_element img {
+        height: auto;
+    }
+</style>
+<!--End of Google Translate Script-->

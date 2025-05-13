@@ -115,6 +115,10 @@ $page_listing_category_item = \App\Models\PageListingCategoryItem::where('id',1)
 						</li> --}}
                         @endif
 
+                        <li class="nav-item">
+                            <div id="google_translate_element" style="display: inline-block;"></div>
+                        </li>
+
 					</ul>
 				</div>
 			</nav>
