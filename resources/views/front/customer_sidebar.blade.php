@@ -6,12 +6,12 @@
 		<a href="{{ route('customer_dashboard') }}" class="btn btn-md btn-block btn-dark">{{ DASHBOARD }}</a>
 	</li>
 
-	<li class="{{ $route == 'customer_package'||$route=='customer_package_buy' ? 'active' : '' }}">
+	{{-- <li class="{{ $route == 'customer_package'||$route=='customer_package_buy' ? 'active' : '' }}">
 		<a href="{{ route('customer_package') }}" class="btn btn-md btn-block btn-dark">{{ PACKAGES }}</a>
 	</li>
 	<li class="{{ $route == 'customer_package_purchase_history'||$route=='customer_package_purchase_invoice'||$route=='customer_package_purchase_history_detail' ? 'active' : '' }}">
 		<a href="{{ route('customer_package_purchase_history') }}" class="btn btn-md btn-block btn-dark">{{ PURCHASE_HISTORY }}</a>
-	</li>
+	</li> --}}
 	<li class="{{ $route == 'customer_listing_view'||$route == 'customer_listing_view_detail'||$route == 'customer_listing_edit' ? 'active' : '' }}">
 		<a href="{{ route('customer_listing_view') }}" class="btn btn-md btn-block btn-dark">{{ ALL_LISTINGS }}</a>
 	</li>
@@ -33,9 +33,9 @@
 	<li class="{{ $route == 'customer_update_photo' ? 'active' : '' }}">
 		<a href="{{ route('customer_update_photo') }}" class="btn btn-md btn-block btn-dark">{{ EDIT_PHOTO }}</a>
 	</li>
-	<li class="{{ $route == 'customer_update_banner' ? 'active' : '' }}">
+	{{-- <li class="{{ $route == 'customer_update_banner' ? 'active' : '' }}">
 		<a href="{{ route('customer_update_banner') }}" class="btn btn-md btn-block btn-dark">{{ EDIT_BANNER }}</a>
-	</li>
+	</li> --}}
 	<li class="{{ $route == 'customer_logout' ? 'active' : '' }}">
 		<a href="{{ route('customer_logout') }}" class="btn btn-md btn-block btn-dark">{{ LOGOUT }}</a>
 	</li>
