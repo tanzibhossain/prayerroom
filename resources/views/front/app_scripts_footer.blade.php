@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
 
-        const apiKey = '180f38f2177744e48575c6fb82f4f73a'; // Replace with your OpenCage API key
+        const apiKey = '180f38f2177744e48575c6fb82f4f73a';
         const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${apiKey}`;
 
         fetch(url)
@@ -148,13 +148,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     const country = components.country || '';
                     const fullLocation = city && country ? `${city}, ${country}` : country;
 
-                    // Fill the "text" input with city + country
+                    // Fill the text input with city, country
                     const textInput = document.querySelector('input[name="text"]');
                     if (textInput) {
                         textInput.value = fullLocation;
                     }
 
-                    // Auto-select the city in Select2 location dropdown
+                    // Match city with <select name="location"> dropdown
                     const locationSelect = document.querySelector('select[name="location"]');
                     if (locationSelect) {
                         const options = locationSelect.options;
@@ -162,7 +162,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             const optionText = options[i].text.trim().toLowerCase();
                             if (optionText.includes(city.toLowerCase())) {
                                 locationSelect.selectedIndex = i;
-                                $(locationSelect).trigger('change'); // Important for Select2
                                 break;
                             }
                         }
