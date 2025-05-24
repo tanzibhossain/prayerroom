@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
 
-        const apiKey = {{ env('OPENCAGE_API_KEY') }};
+        const apiKey = "{{ env('OPENCAGE_API_KEY') }}";
         const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${apiKey}`;
 
         fetch(url)
