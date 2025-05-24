@@ -15,15 +15,16 @@
 					<form action="{{ url('listing-result') }}" method="get">
 						<div class="input-group input-box mb-3">
 							<input type="text" class="form-control" placeholder="{{ FIND_ANYTHING }}" name="text" style="min-height: 40px;">
-							<input type="hidden" name="anemity" value="">
 
-                            <select name="location" class="form-control select2-location" multiple="multiple">
+                            <select name="location" class="form-control select2" >
+                                <option value="">{{ SELECT_LOCATION }}</option>
                                 @foreach($listing_locations as $row)
                                     <option value="{{ $row->id }}">{{ $row->listing_location_name }}</option>
                                 @endforeach
                             </select>
 
-                            <select name="category" class="form-control select2-category" multiple="multiple">
+                            <select name="category" class="form-control select2">
+                                <option value="">{{ SELECT_CATEGORY }}</option>
                                 @foreach($listing_categories as $row)
                                     <option value="{{ $row->id }}">{{ $row->listing_category_name }}</option>
                                 @endforeach

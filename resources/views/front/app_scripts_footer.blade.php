@@ -87,26 +87,6 @@
     <!--End of Tawk.to Script-->
 @endif
 
-<!--Start of Select2 Script-->
-<script>
-    $(document).ready(function () {
-        $('.select2-location').select2({
-            placeholder: "{{ SELECT_LOCATION }}",
-            allowClear: true,
-            width: 'resolve',
-            closeOnSelect: false
-        });
-
-        $('.select2-category').select2({
-            placeholder: "{{ SELECT_CATEGORY }}",
-            allowClear: true,
-            width: 'resolve',
-            closeOnSelect: false
-        });
-    });
-</script>
-<!--End of Select2 Script-->
-
 <!--Start of Google Translate Script-->
 <script type="text/javascript">
     function googleTranslateElementInit() {
@@ -144,3 +124,58 @@
     }
 </style>
 <!--End of Google Translate Script-->
+
+<!--Start of Geolocation API Script-->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+    }
+
+    function successCallback(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        const apiKey = '180f38f2177744e48575c6fb82f4f73a';
+        const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${apiKey}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.results && data.results.length > 0) {
+                    const components = data.results[0].components;
+                    const city = components.city || components.town || components.village || '';
+                    const country = components.country || '';
+                    const fullLocation = city && country ? `${city}, ${country}` : country;
+
+                    // Fill the text input with city, country
+                    const textInput = document.querySelector('input[name="text"]');
+                    if (textInput) {
+                        textInput.value = fullLocation;
+                    }
+
+                    // Match city with <select name="location"> dropdown
+                    const locationSelect = document.querySelector('select[name="location"]');
+                    if (locationSelect) {
+                        const options = locationSelect.options;
+                        for (let i = 0; i < options.length; i++) {
+                            const optionText = options[i].text.trim().toLowerCase();
+                            if (optionText.includes(city.toLowerCase())) {
+                                locationSelect.selectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+            })
+            .catch(err => {
+                console.error('Geocoding error:', err);
+            });
+    }
+
+    function errorCallback(error) {
+        console.warn(`Geolocation error (${error.code}): ${error.message}`);
+    }
+});
+</script>
+<!--End of Geolocation API Script-->
