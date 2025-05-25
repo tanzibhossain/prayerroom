@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\PageTermController;
 use App\Http\Controllers\Admin\CategoryController as CategoryControllerForAdmin;
 use App\Http\Controllers\Admin\BlogController as BlogControllerForAdmin;
 use App\Http\Controllers\Admin\AmenityController as AmenityControllerForAdmin;
+use App\Http\Controllers\Admin\ReligionController as ReligionControllerForAdmin;
 use App\Http\Controllers\Admin\ListingCategoryController as ListingCategoryControllerForAdmin;
 use App\Http\Controllers\Admin\ListingLocationController as ListingLocationControllerForAdmin;
 use App\Http\Controllers\Admin\ListingController as ListingControllerForAdmin;
@@ -200,6 +201,13 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('amenity/delete/{id}', [AmenityControllerForAdmin::class,'destroy'])->name('admin_amenity_delete');
     Route::get('amenity/edit/{id}', [AmenityControllerForAdmin::class,'edit'])->name('admin_amenity_edit');
     Route::post('amenity/update/{id}', [AmenityControllerForAdmin::class,'update'])->name('admin_amenity_update');
+
+    Route::get('religion/view', [ReligionControllerForAdmin::class, 'index'])->name('admin_religion_view');
+    Route::get('religion/create', [ReligionControllerForAdmin::class, 'create'])->name('admin_religion_create');
+    Route::post('religion/store', [ReligionControllerForAdmin::class, 'store'])->name('admin_religion_store');
+    Route::get('religion/delete/{id}', [ReligionControllerForAdmin::class, 'destroy'])->name('admin_religion_delete');
+    Route::get('religion/edit/{id}', [ReligionControllerForAdmin::class, 'edit'])->name('admin_religion_edit');
+    Route::post('religion/update/{id}', [ReligionControllerForAdmin::class, 'update'])->name('admin_religion_update');
 
     Route::get('listing-category/view', [ListingCategoryControllerForAdmin::class,'index'])->name('admin_listing_category_view');
     Route::get('listing-category/create', [ListingCategoryControllerForAdmin::class,'create'])->name('admin_listing_category_create');

@@ -275,6 +275,28 @@
                     @endforeach
                 </div>
 
+                <div class="form-group">
+                    <label for="">{{ RELIGIONS }}</label>
+                    @php
+                        $i = 0;
+                        $religions = DB::table('listing_religions')
+                            ->join('religions', 'listing_religions.religion_id', '=', 'religions.id')
+                            ->select('listing_religions.*', 'religions.name')
+                            ->where('listing_religions.listing_id', $row->id)
+                            ->get();
+
+                    @endphp
+
+                    @foreach($religions as $item)
+                        @php $i++; @endphp
+                        <div class="row bdb @if($i==1) bdt @endif">
+                            <div class="col-md-12">
+                                {{ $i . '. ' . $item->name }}
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
 
                 <div class="form-group">
                     <label for="">{{ PHOTO }}s</label>

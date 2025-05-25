@@ -7,12 +7,14 @@ use App\Models\GeneralSetting;
 use App\Models\Listing;
 use App\Models\ListingAdditionalFeature;
 use App\Models\ListingAmenity;
+use App\Models\ListingReligion;
 use App\Models\ListingCategory;
 use App\Models\ListingLocation;
 use App\Models\ListingPhoto;
 use App\Models\ListingSocialItem;
 use App\Models\ListingVideo;
 use App\Models\Amenity;
+use App\Models\Religion;
 use App\Models\PageListingCategoryItem;
 use App\Models\PageListingItem;
 use App\Models\PageListingLocationItem;
@@ -35,147 +37,90 @@ class ListingController extends Controller
     public function detail($slug) {
         $g_setting = GeneralSetting::where('id', 1)->first();
         $currentDate = date('Y-m-d');
+
         $detail = Listing::with('rListingLocation', 'rListingCategory')
-        	->where('listing_slug', $slug)
-        	->first();
+            ->where('listing_slug', $slug)
+            ->first();
 
         if (!$detail) {
             return redirect()->route('front_home')->with('error', ERR_LISTING_NOT_FOUND);
         }
 
         $listingValid = DB::table('listings')
-        ->leftJoin('package_purchases', function($join) use ($currentDate) {
-            $join->on('listings.user_id', '=', 'package_purchases.user_id')
-                 ->where('package_purchases.package_end_date', '>=', $currentDate)
-                 ->where('package_purchases.currently_active', '=', 1);
-        })
-        ->where('listings.listing_slug', $slug)
-        ->where(function($query) use ($currentDate) {
-            $query->where(function($subQuery) use ($currentDate) {
-                $subQuery->where('listings.user_id', '>', 0)
-                         ->where('package_purchases.package_end_date', '>=', $currentDate)
-                         ->where('package_purchases.currently_active', '=', 1);
+            ->leftJoin('package_purchases', function($join) use ($currentDate) {
+                $join->on('listings.user_id', '=', 'package_purchases.user_id')
+                    ->where('package_purchases.package_end_date', '>=', $currentDate)
+                    ->where('package_purchases.currently_active', '=', 1);
             })
-            ->orWhere('listings.admin_id', '>', 0);
-        })
-        ->exists();
+            ->where('listings.listing_slug', $slug)
+            ->where(function($query) use ($currentDate) {
+                $query->where(function($subQuery) use ($currentDate) {
+                    $subQuery->where('listings.user_id', '>', 0)
+                        ->where('package_purchases.package_end_date', '>=', $currentDate)
+                        ->where('package_purchases.currently_active', '=', 1);
+                })
+                ->orWhere('listings.admin_id', '>', 0);
+            })
+            ->exists();
 
-        if (!$listingValid) {
+        if (!$listingValid || $detail->listing_status == 'Pending') {
             return redirect()->route('front_home');
         }
 
-
-        if($detail->listing_status == 'Pending') {
-            abort(404);
-        }
-
+        // Additional data fetching
         $listing_social_items = ListingSocialItem::where('listing_id', $detail->id)->get();
         $listing_photos = ListingPhoto::where('listing_id', $detail->id)->get();
         $listing_videos = ListingVideo::where('listing_id', $detail->id)->get();
         $listing_amenities = ListingAmenity::where('listing_id', $detail->id)->get();
+        $listing_religions = ListingReligion::where('listing_id', $detail->id)->get();
+
         $listing_additional_features = ListingAdditionalFeature::where('listing_id', $detail->id)->get();
         $listing_categories = ListingCategory::orderBy('listing_category_name', 'asc')->get();
         $listing_locations = ListingLocation::orderBy('listing_location_name', 'asc')->get();
 
-        $reviews = Review::where('listing_id',$detail->id)
-            ->orderBy('id', 'asc')
-            ->get();
+        $reviews = Review::where('listing_id', $detail->id)->orderBy('id', 'asc')->get();
 
-        // Getting overall rating
-        if($reviews->isEmpty()) {
-            $overall_rating = 0;
-        } else {
-            $total_number = 0;
-            $count = 0;
-            foreach($reviews as $item) {
-                $count++;
-                $total_number = $total_number+$item->rating;
-            }
-            $overall_rating = $total_number/$count;
-            if($overall_rating>0 && $overall_rating<=1) {
-                $overall_rating = 1;
-            }
-            elseif($overall_rating>1 && $overall_rating<=1.5) {
-                $overall_rating = 1.5;
-            }
-            elseif($overall_rating>1.5 && $overall_rating<=2) {
-                $overall_rating = 2;
-            }
-            elseif($overall_rating>2 && $overall_rating<=2.5) {
-                $overall_rating = 2.5;
-            }
-            elseif($overall_rating>2.5 && $overall_rating<=3) {
-                $overall_rating = 3;
-            }
-            elseif($overall_rating>3 && $overall_rating<=3.5) {
-                $overall_rating = 3.5;
-            }
-            elseif($overall_rating>3.5 && $overall_rating<=4) {
-                $overall_rating = 4;
-            }
-            elseif($overall_rating>4 && $overall_rating<=4.5) {
-                $overall_rating = 4.5;
-            }
-            elseif($overall_rating>4.5 && $overall_rating<=5) {
-                $overall_rating = 5;
-            }
+        // Calculate overall rating
+        $overall_rating = 0;
+        if (!$reviews->isEmpty()) {
+            $total_number = $reviews->sum('rating');
+            $count = $reviews->count();
+            $average = $total_number / $count;
+
+            $overall_rating = round($average * 2) / 2; // rounds to nearest 0.5 (1, 1.5, 2, ... 5)
         }
 
-        if($detail->user_id == 0) {
-            $agent_detail = Admin::where('id',$detail->admin_id)->first();
-        } elseif($detail->admin_id == 0) {
-            $agent_detail = User::where('id',$detail->user_id)->first();
-        }
+        // Agent details
+        $agent_detail = $detail->user_id == 0
+            ? Admin::where('id', $detail->admin_id)->first()
+            : User::where('id', $detail->user_id)->first();
 
-        $current_auth_user_id = 0;
-        if(Auth::user()) {
-            $current_auth_user_id = Auth::user()->id;
-        }
+        $current_auth_user_id = Auth::check() ? Auth::user()->id : 0;
 
-        // If he already given review for this item
-        $already_given = 0;
         $already_given = Review::where('listing_id', $detail->id)
             ->where('agent_id', $current_auth_user_id)
             ->where('agent_type', 'Customer')
             ->count();
 
-    	return view('front.listing_detail', compact('detail','g_setting','listing_social_items','listing_photos','listing_videos','listing_amenities','listing_additional_features','listing_categories','listing_locations','agent_detail','reviews','current_auth_user_id', 'already_given', 'overall_rating'));
+        return view('front.listing_detail', compact(
+            'detail',
+            'g_setting',
+            'listing_social_items',
+            'listing_photos',
+            'listing_videos',
+            'listing_amenities',
+            'listing_religions',
+            'listing_additional_features',
+            'listing_categories',
+            'listing_locations',
+            'agent_detail',
+            'reviews',
+            'current_auth_user_id',
+            'already_given',
+            'overall_rating'
+        ));
     }
 
-    public function category_all() {
-        $g_setting = GeneralSetting::where('id', 1)->first();
-        $listing_category_page_data = PageListingCategoryItem::where('id', 1)->first();
-
-        $currentDate = date('Y-m-d');
-
-        $orderwise_listing_categories = ListingCategory::select(
-            'listing_categories.id',
-            'listing_categories.listing_category_name',
-            'listing_categories.listing_category_slug',
-            'listing_categories.listing_category_photo',
-            DB::raw('COUNT(listings.id) as listings_count')
-        )
-        ->leftJoin('listings', 'listing_categories.id', '=', 'listings.listing_category_id')
-        ->leftJoin('package_purchases', function($join) use ($currentDate) {
-            $join->on('listings.user_id', '=', 'package_purchases.user_id')
-                 ->where('package_purchases.package_end_date', '>=', $currentDate)
-                 ->where('package_purchases.currently_active', '=', 1);
-        })
-        ->where(function($query) use ($currentDate) {
-            $query->where(function($subQuery) use ($currentDate) {
-                $subQuery->where('listings.user_id', '>', 0)
-                         ->where('package_purchases.package_end_date', '>=', $currentDate)
-                         ->where('package_purchases.currently_active', '=', 1);
-            })
-            ->orWhere('listings.admin_id', '>', 0);
-        })
-        ->groupBy('listing_categories.id', 'listing_categories.listing_category_name', 'listing_categories.listing_category_slug', 'listing_categories.listing_category_photo')
-        ->orderBy('listings_count', 'desc')
-        ->get();
-
-
-        return view('front.listing_categories', compact('g_setting', 'listing_category_page_data', 'orderwise_listing_categories'));
-    }
 
     public function category_detail($slug) {
     	$g_setting = GeneralSetting::where('id', 1)->first();
@@ -303,27 +248,41 @@ class ListingController extends Controller
         $listing_categories = ListingCategory::get();
         $listing_locations = ListingLocation::get();
         $amenities = Amenity::get();
+        $religions = Religion::get();
 
         $all_text = $request->text;
         $category_ids = $request->category ? explode(',', $request->category) : [];
         $location_ids = $request->location ? explode(',', $request->location) : [];
         $amenity_ids = $request->amenity ? explode(',', $request->amenity) : [];
+        $religion_ids = $request->religion ? explode(',', $request->religion) : [];
+
+        $category_counts = DB::table('listings')
+            ->select('listing_category_id', DB::raw('count(*) as count'))
+            ->groupBy('listing_category_id')
+            ->pluck('count', 'listing_category_id')->toArray();
+
+        $location_counts = DB::table('listings')
+            ->select('listing_location_id', DB::raw('count(*) as count'))
+            ->groupBy('listing_location_id')
+            ->pluck('count', 'listing_location_id')->toArray();
+
+        $amenity_counts = DB::table('listing_amenities')
+            ->select('amenity_id', DB::raw('count(*) as count'))
+            ->groupBy('amenity_id')
+            ->pluck('count', 'amenity_id')->toArray();
+
+        $religion_counts = DB::table('listing_religions')
+            ->select('religion_id', DB::raw('count(*) as count'))
+            ->groupBy('religion_id')
+            ->pluck('count', 'religion_id')->toArray();
 
         $currentDate = date('Y-m-d');
         $listing_items = DB::table('listings');
 
         if ($request->text != '') {
-            // Find category IDs matching the text
-            $matchedCategoryIds = ListingCategory::where('listing_category_name', 'LIKE', '%' . $request->text . '%')
-                ->pluck('id')
-                ->toArray();
+            $matchedCategoryIds = ListingCategory::where('listing_category_name', 'LIKE', '%' . $request->text . '%')->pluck('id')->toArray();
+            $matchedLocationIds = ListingLocation::where('listing_location_name', 'LIKE', '%' . $request->text . '%')->pluck('id')->toArray();
 
-            // Find location IDs matching the text
-            $matchedLocationIds = ListingLocation::where('listing_location_name', 'LIKE', '%' . $request->text . '%')
-                ->pluck('id')
-                ->toArray();
-
-            // Filter by name or matched category/location IDs
             $listing_items = $listing_items->where(function ($query) use ($request, $matchedCategoryIds, $matchedLocationIds) {
                 $query->where('listings.listing_name', 'LIKE', '%' . $request->text . '%');
 
@@ -346,10 +305,15 @@ class ListingController extends Controller
         }
 
         if (!empty($amenity_ids)) {
-            // dd($amenity_ids);
             $listing_items = $listing_items
                 ->join('listing_amenities', 'listings.id', '=', 'listing_amenities.listing_id')
                 ->whereIn('listing_amenities.amenity_id', $amenity_ids);
+        }
+
+        if (!empty($religion_ids)) {
+            $listing_items = $listing_items
+                ->join('listing_religions', 'listings.id', '=', 'listing_religions.listing_id')
+                ->whereIn('listing_religions.religion_id', $religion_ids);
         }
 
         $listing_items = $listing_items
@@ -386,12 +350,19 @@ class ListingController extends Controller
             'listing_categories',
             'listing_locations',
             'amenities',
+            'religions',
             'all_text',
             'category_ids',
             'location_ids',
-            'amenity_ids'
+            'amenity_ids',
+            'religion_ids',
+            'category_counts',
+            'location_counts',
+            'amenity_counts',
+            'religion_counts'
         ));
     }
+
 
 
     public function send_message(Request $request) {

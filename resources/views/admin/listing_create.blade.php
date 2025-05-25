@@ -20,6 +20,7 @@
                             <a class="nav-link" id="p2_tab" data-toggle="pill" href="#p2" role="tab" aria-controls="p2" aria-selected="false">{{ OPENING_HOUR }}</a>
                             <a class="nav-link" id="p3_tab" data-toggle="pill" href="#p3" role="tab" aria-controls="p3" aria-selected="false">{{ SOCIAL_MEDIA }}</a>
                             <a class="nav-link" id="p4_tab" data-toggle="pill" href="#p4" role="tab" aria-controls="p4" aria-selected="false">{{ AMENITY }}</a>
+                            <a class="nav-link" id="p4b_tab" data-toggle="pill" href="#p4b" role="tab" aria-controls="p4b" aria-selected="false">{{ RELIGION }}</a>
                             <a class="nav-link" id="p5_tab" data-toggle="pill" href="#p5" role="tab" aria-controls="p5" aria-selected="false">{{ PHOTO_GALLERY }}</a>
                             <a class="nav-link" id="p6_tab" data-toggle="pill" href="#p6" role="tab" aria-controls="p6" aria-selected="false">{{ VIDEO_GALLERY }}</a>
                             <a class="nav-link" id="p7_tab" data-toggle="pill" href="#p7" role="tab" aria-controls="p7" aria-selected="false">{{ ADDITIONAL_FEATURES }}</a>
@@ -223,7 +224,25 @@
                             </div>
                             <!-- // Tab 4 -->
 
-
+                            <!-- Tab 4b -->
+                            <div class="tab-pane fade" id="p4b" role="tabpanel" aria-labelledby="p4b_tab">
+                                <h4 class="heading-in-tab">{{ RELIGION }}</h4>
+                                <div class="row">
+                                    @php $i=0; @endphp
+                                    @foreach($religions as $row)
+                                    @php $i++; @endphp
+                                    <div class="col-md-4">
+                                        <div class="form-check mb_10">
+                                            <input class="form-check-input" name="religion[]" type="checkbox" value="{{ $row->id }}" id="religions{{ $i }}">
+                                            <label class="form-check-label" for="religions{{ $i }}">
+                                                {{ $row->name }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <!-- // Tab 4b -->
 
                             <!-- Tab 5 -->
                             <div class="tab-pane fade" id="p5" role="tabpanel" aria-labelledby="p5_tab">

@@ -9,7 +9,9 @@ use App\Models\ListingVideo;
 use App\Models\ListingCategory;
 use App\Models\ListingLocation;
 use App\Models\ListingAmenity;
+use App\Models\ListingReligion;
 use App\Models\Amenity;
+use App\Models\Religion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -44,7 +46,8 @@ class ListingController extends Controller
         $listing_category = ListingCategory::orderBy('id','asc')->get();
         $listing_location = ListingLocation::orderBy('id','asc')->get();
         $amenity = Amenity::orderBy('id','asc')->get();
-        return view('admin.listing_create', compact('listing','listing_category','listing_location','amenity'));
+        $religions = Religion::orderBy('id', 'asc')->get();
+        return view('admin.listing_create', compact('listing','listing_category','listing_location','amenity','religions'));
     }
 
     public function store(Request $request) {
@@ -106,6 +109,21 @@ class ListingController extends Controller
                 $obj = new ListingAmenity;
                 $obj->listing_id = $ai_id;
                 $obj->amenity_id = $arr_amenity[$i];
+                $obj->save();
+            }
+        }
+
+        // Religion
+        if($request->religion != '') {
+            $arr_religion = array();
+            foreach($request->religion as $item) {
+                $arr_religion[] = $item;
+            }
+
+            for($i=0;$i<count($arr_religion);$i++) {
+                $obj = new ListingReligion;
+                $obj->listing_id = $ai_id;
+                $obj->religion_id = $arr_religion[$i];
                 $obj->save();
             }
         }
@@ -207,6 +225,7 @@ class ListingController extends Controller
 
         $listing_category = ListingCategory::orderBy('id','asc')->get();
         $listing_location = ListingLocation::orderBy('id','asc')->get();
+
         $amenity = Amenity::orderBy('id','asc')->get();
 
         $existing_amenities_array = array();
@@ -215,13 +234,21 @@ class ListingController extends Controller
             $existing_amenities_array[] = $row->amenity_id;
         }
 
+        $religions = Religion::orderBy('id', 'asc')->get();
+
+        $existing_religions_array = [];
+        $listing_religions = ListingReligion::where('listing_id', $id)->orderBy('id', 'asc')->get();
+        foreach ($listing_religions as $row) {
+            $existing_religions_array[] = $row->religion_id;
+        }
+
         $listing_photos = ListingPhoto::where('listing_id',$id)->orderBy('id','asc')->get();
         $listing_videos = ListingVideo::where('listing_id',$id)->orderBy('id','asc')->get();
         $listing_additional_features = ListingAdditionalFeature::where('listing_id',$id)->orderBy('id','asc')->get();
 
         $listing_social_items = ListingSocialItem::where('listing_id',$id)->orderBy('id','asc')->get();
 
-        return view('admin.listing_edit', compact('listing','listing_category','listing_location','amenity','listing_photos','listing_videos','listing_additional_features','listing_social_items','listing_amenities','existing_amenities_array'));
+        return view('admin.listing_edit', compact('listing','listing_category','listing_location','amenity','listing_photos','listing_videos','listing_additional_features','listing_social_items','listing_amenities','existing_amenities_array', 'religions', 'listing_religions', 'existing_religions_array'));
 
     }
 
@@ -314,6 +341,42 @@ class ListingController extends Controller
                 $obj = new ListingAmenity;
                 $obj->listing_id = $id;
                 $obj->amenity_id = $result2[$i];
+                $obj->save();
+            }
+        }
+
+        // Religion
+        $existing_religions_array = [];
+        $arr_religion = [];
+        $result1 = [];
+        $result2 = [];
+
+        $listing_religions = ListingReligion::where('listing_id', $id)->get();
+        foreach ($listing_religions as $row) {
+            $existing_religions_array[] = $row->religion_id;
+        }
+
+        if ($request->religion != '') {
+            foreach ($request->religion as $item) {
+                $arr_religion[] = $item;
+            }
+        }
+
+        $result1 = array_values(array_diff($existing_religions_array, $arr_religion));
+        if (!empty($result1)) {
+            foreach ($result1 as $religion_id) {
+                ListingReligion::where('listing_id', $id)
+                    ->where('religion_id', $religion_id)
+                    ->delete();
+            }
+        }
+
+        $result2 = array_values(array_diff($arr_religion, $existing_religions_array));
+        if (!empty($result2)) {
+            foreach ($result2 as $religion_id) {
+                $obj = new ListingReligion;
+                $obj->listing_id = $id;
+                $obj->religion_id = $religion_id;
                 $obj->save();
             }
         }
@@ -415,6 +478,7 @@ class ListingController extends Controller
         $listing->delete();
 
         ListingAmenity::where('listing_id', $id)->delete();
+        ListingReligion::where('listing_id', $id)->delete();
         ListingSocialItem::where('listing_id', $id)->delete();
         ListingVideo::where('listing_id', $id)->delete();
         ListingAdditionalFeature::where('listing_id', $id)->delete();

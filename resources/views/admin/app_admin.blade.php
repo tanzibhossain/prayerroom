@@ -165,6 +165,7 @@ $g_setting = \App\Models\GeneralSetting::where('id',1)->first();
                     <a class="collapse-item" href="{{ route('admin_listing_category_view') }}">{{ LISTING_CATEGORY }}</a>
                     <a class="collapse-item" href="{{ route('admin_listing_location_view') }}">{{ LISTING_LOCATION }}</a>
                     <a class="collapse-item" href="{{ route('admin_amenity_view') }}">{{ LISTING_AMENITY }}</a>
+                    <a class="collapse-item" href="{{ route('admin_religion_view') }}">{{ LISTING_RELIGION }}</a>
                     <a class="collapse-item" href="{{ route('admin_listing_view') }}">{{ LISTING }}</a>
                 </div>
             </div>

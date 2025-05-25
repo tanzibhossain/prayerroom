@@ -36,12 +36,15 @@
                         <div class="lf-widget">
                             <label><strong>{{ CATEGORIES }}</strong></label>
                             @foreach($listing_categories as $row)
-                                <div>
-                                    <label>
-                                        <input type="checkbox" name="category" value="{{ $row->id }}" {{ in_array($row->id, $selected_category_ids) ? 'checked' : '' }}>
-                                        {{ $row->listing_category_name }}
-                                    </label>
-                                </div>
+                                @php $count = $category_counts[$row->id] ?? 0; @endphp
+                                @if($count > 0)
+                                    <div>
+                                        <label>
+                                            <input type="checkbox" name="category" value="{{ $row->id }}" {{ in_array($row->id, $selected_category_ids) ? 'checked' : '' }}>
+                                            {{ $row->listing_category_name }} ({{ $count }})
+                                        </label>
+                                    </div>
+                                @endif
                             @endforeach
                         </div>
 
@@ -49,12 +52,15 @@
                         <div class="lf-widget">
                             <label><strong>{{ LOCATIONS }}</strong></label>
                             @foreach($listing_locations as $row)
-                                <div>
-                                    <label>
-                                        <input type="checkbox" name="location" value="{{ $row->id }}" {{ in_array($row->id, $selected_location_ids) ? 'checked' : '' }}>
-                                        {{ $row->listing_location_name }}
-                                    </label>
-                                </div>
+                                @php $count = $location_counts[$row->id] ?? 0; @endphp
+                                @if($count > 0)
+                                    <div>
+                                        <label>
+                                            <input type="checkbox" name="location" value="{{ $row->id }}" {{ in_array($row->id, $selected_location_ids) ? 'checked' : '' }}>
+                                            {{ $row->listing_location_name }} ({{ $count }})
+                                        </label>
+                                    </div>
+                                @endif
                             @endforeach
                         </div>
 
@@ -62,12 +68,31 @@
                         <div class="lf-widget">
                             <label><strong>{{ AMENITIES }}</strong></label>
                             @foreach($amenities as $row)
-                                <div>
-                                    <label>
-                                        <input type="checkbox" name="amenity" value="{{ $row->id }}" {{ in_array($row->id, $selected_amenity_ids) ? 'checked' : '' }}>
-                                        {{ $row->amenity_name }}
-                                    </label>
-                                </div>
+                                @php $count = $amenity_counts[$row->id] ?? 0; @endphp
+                                @if($count > 0)
+                                    <div>
+                                        <label>
+                                            <input type="checkbox" name="amenity" value="{{ $row->id }}" {{ in_array($row->id, $selected_amenity_ids) ? 'checked' : '' }}>
+                                            {{ $row->amenity_name }} ({{ $count }})
+                                        </label>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+
+                        <!-- Religion Checkboxes -->
+                        <div class="lf-widget">
+                            <label><strong>{{ RELIGIONS }}</strong></label>
+                            @foreach($religions as $row)
+                                @php $count = $religion_counts[$row->id] ?? 0; @endphp
+                                @if($count > 0)
+                                    <div>
+                                        <label>
+                                            <input type="checkbox" name="religion[]" value="{{ $row->id }}" {{ in_array($row->id, $selected_religion_ids ?? []) ? 'checked' : '' }}>
+                                            {{ $row->name }} ({{ $count }})
+                                        </label>
+                                    </div>
+                                @endif
                             @endforeach
                         </div>
 
