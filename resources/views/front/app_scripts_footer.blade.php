@@ -144,32 +144,43 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 if (data.results && data.results.length > 0) {
                     const components = data.results[0].components;
+
                     const city = components.city || components.town || components.village || '';
                     const country = components.country || '';
-                    const fullLocation = city && country ? `${city}, ${country}` : country;
+                    const road = components.road || '';
+                    const suburb = components.suburb || '';
+                    const neighbourhood = components.neighbourhood || '';
+                    const house = components.house || '';
+                    const postcode = components.postcode || '';
+                    const state = components.state || '';
+                    const areaParts = [house, road, suburb, neighbourhood, state, postcode].filter(Boolean).join(', ');
 
+                    const fullLocation = city && country ? `${city}, ${country}` : country;
                     let matched = false;
 
-                    // Try matching city in <select name="location">
                     const locationSelect = document.querySelector('select[name="location"]');
                     if (locationSelect) {
                         const options = locationSelect.options;
                         for (let i = 0; i < options.length; i++) {
                             const optionText = options[i].text.trim().toLowerCase();
-                            if (optionText.includes(city.toLowerCase())) {
+                            if (optionText.includes(city.toLowerCase()) && optionText.includes(country.toLowerCase())) {
                                 locationSelect.selectedIndex = i;
-                                $(locationSelect).trigger('change'); // Select2 refresh
+                                $(locationSelect).trigger('change');
                                 matched = true;
                                 break;
                             }
                         }
                     }
 
-                    // If no dropdown match, fill into text box
-                    if (!matched) {
-                        const textInput = document.querySelector('input[name="text"]');
-                        if (textInput) {
-                            textInput.value = fullLocation;
+                    const textInput = document.querySelector('input[name="text"]');
+                    if (textInput) {
+                        if (matched) {
+                            // If matched, fill other parts of address (excluding city, country)
+                            textInput.value = areaParts;
+                        } else {
+                            // If no match, put all location info in textbox
+                            const fallbackAddress = [areaParts, fullLocation].filter(Boolean).join(', ');
+                            textInput.value = fallbackAddress;
                         }
                     }
                 }
