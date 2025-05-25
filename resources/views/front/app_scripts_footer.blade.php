@@ -147,15 +147,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     const city = components.city || components.town || components.village || '';
                     const country = components.country || '';
+                    const fullLocation = city && country ? `${city}, ${country}` : country;
+
+                    // Only include specific address parts
                     const road = components.road || '';
                     const suburb = components.suburb || '';
                     const neighbourhood = components.neighbourhood || '';
                     const house = components.house || '';
-                    const postcode = components.postcode || '';
-                    const state = components.state || '';
-                    const areaParts = [house, road, suburb, neighbourhood, state, postcode].filter(Boolean).join(', ');
+                    const areaParts = [house, road, suburb, neighbourhood].filter(Boolean).join(', ');
 
-                    const fullLocation = city && country ? `${city}, ${country}` : country;
                     let matched = false;
 
                     const locationSelect = document.querySelector('select[name="location"]');
@@ -175,12 +175,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     const textInput = document.querySelector('input[name="text"]');
                     if (textInput) {
                         if (matched) {
-                            // If matched, fill other parts of address (excluding city, country)
+                            // If dropdown match, put only area (excluding city/country)
                             textInput.value = areaParts;
                         } else {
-                            // If no match, put all location info in textbox
-                            const fallbackAddress = [areaParts, fullLocation].filter(Boolean).join(', ');
-                            textInput.value = fallbackAddress;
+                            // If no match, include area + city + country
+                            const fallback = [areaParts, fullLocation].filter(Boolean).join(', ');
+                            textInput.value = fallback;
                         }
                     }
                 }
