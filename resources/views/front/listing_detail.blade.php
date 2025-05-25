@@ -132,6 +132,12 @@
                                                 <textarea name="message" class="form-control h-100" cols="30" rows="10" required></textarea>
                                             </div>
                                         </div>
+                                        <div class="form-group">
+                                            <label for="booking_datetime">Preferred Date & Time</label>
+                                            <div>
+                                                <input type="datetime-local" name="booking_datetime" id="booking_datetime" class="form-control" required>
+                                            </div>
+                                        </div>
                                         @if($g_setting->google_recaptcha_status == 'Show')
                                             <div class="form-group">
                                                 <div class="g-recaptcha" data-sitekey="{{ $g_setting->google_recaptcha_site_key }}"></div>
@@ -618,5 +624,16 @@
 		</div>
 	</div>
 </div>
-
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const datetimeInput = document.getElementById("booking_datetime");
+        if (datetimeInput) {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // Correct for timezone
+            const formatted = now.toISOString().slice(0, 16);
+            datetimeInput.min = formatted;
+            datetimeInput.value = formatted;
+        }
+    });
+</script>
 @endsection
