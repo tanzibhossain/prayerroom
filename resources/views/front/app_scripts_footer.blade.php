@@ -149,12 +149,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     const country = components.country || '';
                     const fullLocation = city && country ? `${city}, ${country}` : country;
 
-                    // Only include specific address parts
-                    const road = components.road || '';
-                    const suburb = components.suburb || '';
-                    const neighbourhood = components.neighbourhood || '';
-                    const house = components.house || '';
-                    const areaParts = [house, road, suburb, neighbourhood].filter(Boolean).join(', ');
+                    // Only include valid address parts (excluding 'unnamed' entries)
+                    const rawParts = [
+                        components.house || '',
+                        components.road || '',
+                        components.suburb || '',
+                        components.neighbourhood || ''
+                    ];
+
+                    const areaParts = rawParts
+                        .filter(part => part && !part.toLowerCase().includes('unnamed'))
+                        .join(', ');
 
                     let matched = false;
 
@@ -175,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const textInput = document.querySelector('input[name="text"]');
                     if (textInput) {
                         if (matched) {
-                            // If dropdown match, put only area (excluding city/country)
+                            // If dropdown matched, use filtered area parts only
                             textInput.value = areaParts;
                         } else {
                             // If no match, include area + city + country
