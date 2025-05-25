@@ -339,6 +339,18 @@
 					</div>
 					@endif
 
+                    @if(!$listing_religions->isEmpty())
+                        <div class="sep"></div>
+                        <h2><i class="fas fa-praying-hands"></i> {{ RELIGIONS }}</h2>
+                        <div class="amenities">
+                            <ul>
+                                @foreach($listing_religions as $row)
+                                    <li><i class="fas fa-check-square"></i> {{ $row->name }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
 
 					@if(!$listing_additional_features->isEmpty())
 					<div class="sep"></div>

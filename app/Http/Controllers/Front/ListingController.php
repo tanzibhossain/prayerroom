@@ -72,7 +72,10 @@ class ListingController extends Controller
         $listing_photos = ListingPhoto::where('listing_id', $detail->id)->get();
         $listing_videos = ListingVideo::where('listing_id', $detail->id)->get();
         $listing_amenities = ListingAmenity::where('listing_id', $detail->id)->get();
-        $listing_religions = ListingReligion::where('listing_id', $detail->id)->get();
+        $listing_religions = ListingReligion::where('listing_religions.listing_id', $detail->id)
+            ->join('religions', 'listing_religions.religion_id', '=', 'religions.id')
+            ->select('religions.name')
+            ->get();
 
         $listing_additional_features = ListingAdditionalFeature::where('listing_id', $detail->id)->get();
         $listing_categories = ListingCategory::orderBy('listing_category_name', 'asc')->get();
