@@ -375,12 +375,14 @@ class ListingController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email',
-            'message' => 'required'
+            'message' => 'required',
+            'booking_datetime' => 'required'
         ], [
             'name.required' => ERR_NAME_REQUIRED,
             'email.required' => ERR_EMAIL_REQUIRED,
             'email.email' => ERR_EMAIL_INVALID,
-            'message.required' => ERR_MESSAGE_REQUIRED
+            'message.required' => ERR_MESSAGE_REQUIRED,
+            'booking_datetime.required' => ERR_BOOKING_DATE_REQUIRED
         ]);
 
         if($g_setting->google_recaptcha_status == 'Show') {
@@ -407,6 +409,7 @@ class ListingController extends Controller
         $message = str_replace('[[email]]', $request->email, $message);
         $message = str_replace('[[phone]]', $request->phone, $message);
         $message = str_replace('[[message]]', $request->message, $message);
+        $message = str_replace('[[booking_datetime]]', $request->booking_datetime, $message);
 
         Mail::to($request->agent_email)->send(new Websitemail($subject,$message));
 
